@@ -105,7 +105,7 @@ const Login = () => {
                     </div>
 
                     {/* Login Button */}
-                    <button 
+                    <button onClick={()=> navigator("/profile")}
                         type="submit"
                         className="w-full bg-[#7fad39] hover:bg-[#6c992d] transition text-white py-4 rounded-xl font-semibold text-lg"
                     >
