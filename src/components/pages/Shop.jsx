@@ -134,6 +134,23 @@ function SearchSection({selectedCategory, setSelectedCategory, categories, fetch
 /* ================= MAIN ================= */
 
 function MainSection({products,selectedCategory, setSelectedCategory, categories, fetchProducts}) {
+  const[values, setValues] = useState([0, 100]);
+  const[priceRange, setPriceRange] = useState({min:0 , max:100});
+  useEffect(()=>{
+    const min = Math.min(...products.map(product=>product.price));
+    const max = Math.max(...products.map(product=>product.price));
+    const range = max-min;
+
+    setPriceRange({
+      min: range*values[0]/100+min,
+      max: range*values[1]/100+min
+    })
+  },[values,products])
+
+ useEffect(()=>{
+  setValues([0,100]);
+
+ },[products])
   return (
     <section className="max-w-[1296px] mx-auto px-4 sm:px-6 lg:px-12 xl:px-24 py-10 grid grid-cols-1 lg:grid-cols-[250px_1fr] gap-8">
 
@@ -155,7 +172,7 @@ function MainSection({products,selectedCategory, setSelectedCategory, categories
 
         <div>
           <h2 className="text-xl sm:text-2xl font-bold mb-3">Price</h2>
-          <ReactRangeExample />
+          <PriceRangeSlider priceRange={priceRange} values={values} setValues={setValues} />
         </div>
 
         {/* <h2 className="text-xl sm:text-2xl font-bold">Colors</h2>
@@ -181,7 +198,7 @@ function MainSection({products,selectedCategory, setSelectedCategory, categories
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
-          {products.map((el)=>(
+          {products.filter(el=>el.price>=priceRange.min && el.price<=priceRange.max).map((el)=>(
             <Link key={el._id} to={"/product/"+el._id}><Product item={el}/></Link>
           ))}
         </div>
@@ -223,39 +240,47 @@ function Product({item}) {
 
 /* ================= RANGE ================= */
 
-function ReactRangeExample() {
-  const [values, setValues] = useState([20, 80]);
+function PriceRangeSlider({values, setValues, priceRange}) {
+ 
 
   return (
-    <div className="w-full">
-      <Range
-        step={1}
-        min={0}
-        max={100}
-        values={values}
-        onChange={setValues}
-        
-        renderTrack={({ props, children }) => (
-          <div
-            {...props}
-            className="h-1 w-full rounded"
-            style={{background: `linear-gradient(to right, gray ${values[0]}%, red ${values[0]}%, red ${values[1]}%, gray ${values[1]}%)`}}
-          >
-            {children}
-          </div>
-        )}
-        renderThumb={({ props }) => (
-          <div
-            {...props}
-            className="w-4 h-4 bg-white outline-none border-none shadow rounded-full"
-          />
-        )}
-        
-      />
-
-      <p className="text-[#7fad39] mt-2 text-sm font-bold">
-        ${values[0] * 5} - ${values[1] * 5}
+   <>
+   <Range
+      label="Select your value"
+      step={1}
+      min={0}
+      max={100}
+      values={values}
+      onChange={(values) => setValues(values)}
+      renderTrack={({ props, children }) => (
+        <div
+          {...props}
+          style={{
+            ...props.style,
+            height: "5px",
+            width: "100%",
+            backgroundImage:`linear-gradient(to right, #e3dede ${values[0]}%, red ${values[1]}%, red ${values[1]}%, #e3dede ${values[1]}%)`
+          }}
+        >
+          {children}
+        </div>
+      )}
+      renderThumb={({ props }) => (
+        <div
+          {...props}
+          key={props.key}
+          style={{
+            ...props.style,
+            height: "20px",
+            width: "20px",
+            borderRadius:"50%",
+            backgroundColor: "red",
+          }}
+        />
+      )}
+    />
+      <p className="py-2"> Price: {priceRange.min} - {priceRange.max}
       </p>
-    </div>
+   </>
   );
 }

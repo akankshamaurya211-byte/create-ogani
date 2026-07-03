@@ -8,6 +8,8 @@ import {
 } from "lucide-react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import {useRazorpay} from "react-razorpay";
+
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([
@@ -183,8 +185,85 @@ const Cart = () => {
       toast("Could not fetch cart at the moment!!", { position: "bottom-center" })
     }
   }
-
+  
   useEffect(() => { fetchCart() }, []);
+
+  // Payment --------------------------
+
+
+  const {Razorpay} = useRazorpay();
+
+  // async function handlePayment() {
+  //   try {
+  //     let response = await fetch(import.meta.env.VITE_BACKEND_HOST+"/order");
+  //     if(!response.ok)
+  //       return toast("could not proceed at the moment!", {position:"bottom-center"});
+
+  //     response = await response.json();
+  //     const orderObj = response.message;
+  //     const rzpay = new Razorpay({
+  //       key: import.meta.env.VITE_RAZ_KEY,
+  //       oder_id : orderObj.id,
+  //       amount: orderObj.amount,
+  //       currency: orderObj.currency
+  //     });
+  //     rzpay.open();
+  //   } catch (error) {
+  //     console.log(error);
+  //     toast("could not proceed at the moment!", {position:"bottom-center"})
+      
+  //   }
+  // }
+
+  async function createOrder() {
+    try {
+         let response = await fetch(import.meta.env.VITE_BACKEND_HOST+"/create-orders",
+         { 
+          method:"POST",
+          credentials:"include",
+          headers:{"content-type":"application/json"}
+         }
+        );
+
+      if(!response.ok)
+        return toast("could not proceed at the moment!", {position:"bottom-center"});
+
+      response = await response.json();
+       const orderObj = response;
+       console.log(response);
+
+       const rzpay = new Razorpay({
+        key: import.meta.env.VITE_RAZ_KEY,
+        oder_id : orderObj.orderId,
+        amount: orderObj.amount,
+        currency: orderObj.currency,
+        handler: async (payment_obj)=>{
+          try {
+            let res = await fetch(import.meta.env.VITE_BACKEND_HOST+"/verifypayment",{
+              method:"POST",
+              headers:{"content-type":"application/json"},
+              credentials:"include",
+              body:JSON.stringify(payment_obj)
+            });
+
+            if(!res.ok)
+              return toast("Something went wrong! If you are sure that amount has been deducted, please contact us!", {position:"bottom-center"});
+              
+
+            toast("Thank you for shopping with us!!", {position:"bottom-center"});
+          } catch (error) {
+            toast("Something went wrong! If you are sure that amount has been deducted, please contact us!", {position:"bottom-center"});
+          }
+        }
+      });
+
+      rzpay.open();
+
+    } catch (error) {
+      console.log(error);
+      toast("could not proceed at the moment!", {position:"bottom-center"})
+    }
+  }
 
   return (
     <div className="min-h-screen bg-[#f5f5f5] py-10 px-4">
@@ -352,13 +431,13 @@ const Cart = () => {
                 </div>
 
                 {/* Checkout */}
-                <button className="w-full mt-8 bg-[#7fad39] hover:bg-[#6f9d32] transition text-white py-5 rounded-2xl font-semibold text-lg flex items-center justify-center gap-3">
+                <button onClick={createOrder} className="w-full mt-8 bg-[#7fad39] hover:bg-[#6f9d32] transition text-white py-5 rounded-2xl font-semibold text-lg flex items-center justify-center gap-3">
                   Proceed To Checkout
                   <ArrowRight size={20} />
                 </button>
 
                 {/* Continue Shopping */}
-                <button  className="w-full mt-4 border border-gray-300 hover:bg-gray-100 transition py-5 rounded-2xl font-semibold text-gray-700">
+                <button onClick={()=>navigator("/shop")} className="w-full mt-4 border border-gray-300 hover:bg-gray-100 transition py-5 rounded-2xl font-semibold text-gray-700">
                   Continue Shopping
                 </button>
               </div>

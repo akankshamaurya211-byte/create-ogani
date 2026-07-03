@@ -17,7 +17,7 @@ const Profile = () => {
 
   const navigate = useNavigate();
   const [profileData, setProfileData] = useState({});
-
+  
   const [selectedImage, setSelectedImage] = useState(null); //Ye actual file (image) store karta hai jo user select karta hai.
   const [showPopup, setShowPopup] = useState(false); // Ye modal (popup) open/close control karta hai
 
