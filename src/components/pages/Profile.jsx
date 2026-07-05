@@ -67,14 +67,14 @@ const Profile = () => {
       );
 
       if (!response.ok) {
-        return toast.error("Upload failed");
+        return toast.error("Upload failed", {position:"bottom-center"});
       }
 
       toast.success("Profile updated");
       setShowPopup(false);
       fetchProfile();
     } catch (err) {
-      toast.error("Upload failed");
+      toast.error("Upload failed",{position:"bottom-center"});
     }
   };
 

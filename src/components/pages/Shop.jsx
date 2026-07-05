@@ -18,39 +18,46 @@ import { toast } from "react-toastify";
 
 export default function Shop() {
   const [departmentsVisible, setDepartmentsVisible] = useState(false);
-  const[products, setProducts]= useState([]);
-  const[categories, setCategories]= useState([]);
-  const[selectedCategory,setSelectedCategory]= useState("");
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  async function fetchProducts(searchTerm="", category="") {
+  async function fetchProducts(searchTerm = "", category = "") {
     try {
-   
-      if(searchTerm!="")
-      setSelectedCategory("");
-      let response = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/products?q=${searchTerm}&category=${category}`);
-      if(!response.ok)
-        return toast.error("Could not fetch products at the moments!",{position:"bottom-center"});
 
-      
+      setLoading(true);
+
+      if (searchTerm != "")
+        setSelectedCategory("");
+      let response = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/products?q=${searchTerm}&category=${category}`);
+      if (!response.ok)
+        return toast.error("Could not fetch products at the moments!", { position: "bottom-center" });
+
+
       response = await response.json();
-     
+
       setProducts(response.products);
       setCategories(response.categories)
     } catch (error) {
       console.log(error)
-      toast.error("Could not fetch products at the moments!",{position:"bottom-center"});
+      toast.error("Could not fetch products at the moments!", { position: "bottom-center" });
+
     }
-    
+    finally {
+      setLoading(false);
+    }
+
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchProducts();
   }, []);
-  
+
 
   return (
     <>
-      <SearchSection fetchProducts={fetchProducts} setSelectedCategory= {setSelectedCategory} categories={categories} selectedCategory={selectedCategory}/>
+      <SearchSection fetchProducts={fetchProducts} setSelectedCategory={setSelectedCategory} categories={categories} selectedCategory={selectedCategory} />
 
       {/* Breadcrumb */}
       <section className="my-6 py-12 px-4 bg-[url('./images/shop/breadcrumb.jpg')] bg-cover bg-center text-white text-center">
@@ -58,16 +65,16 @@ export default function Shop() {
         <p className="mt-2 text-sm sm:text-base">HOME - SHOP</p>
       </section>
 
-      <MainSection products={products} setSelectedCategory={setSelectedCategory} selectedCategory={selectedCategory} categories={categories} fetchProducts={fetchProducts} />
+      <MainSection loading={loading} products={products} setSelectedCategory={setSelectedCategory} selectedCategory={selectedCategory} categories={categories} fetchProducts={fetchProducts} />
     </>
   );
 }
 
 /* ================= SEARCH ================= */
 
-function SearchSection({selectedCategory, setSelectedCategory, categories, fetchProducts}) {
+function SearchSection({ selectedCategory, setSelectedCategory, categories, fetchProducts }) {
   const [departmentsVisible, setDepartmentsVisible] = useState(false);
-  const [searchInput, setSearchInput]= useState("");
+  const [searchInput, setSearchInput] = useState("");
 
   return (
     <div className="max-w-[1296px] mx-auto px-4 sm:px-6 lg:px-12 xl:px-24 py-6 flex flex-col lg:flex-row gap-4 lg:gap-12">
@@ -78,38 +85,39 @@ function SearchSection({selectedCategory, setSelectedCategory, categories, fetch
         className="relative flex items-center justify-between gap-6 bg-[#7fad39] text-white px-4 py-3 cursor-pointer w-full lg:w-auto"
       >
         <GiHamburgerMenu />
-        <span style={{userSelect:"none"}}>All Departments</span>
+        <span style={{ userSelect: "none" }}>All Departments</span>
         <MdKeyboardArrowDown />
 
-        <ul 
+        <ul
           className="absolute top-full left-0 bg-white text-black w-full lg:w-full overflow-hidden border transition-all duration-300 z-50"
-          style={{ userSelect:"none",
+          style={{
+            userSelect: "none",
             maxHeight: departmentsVisible ? "500px" : "0",
           }}
         >
-          {categories.map((el)=>(
-          <li onClick={()=>{
-            setSelectedCategory(el)
-            fetchProducts("",el)
-          }}key={el} className={`"hover:text-[#7fad39] text-[${selectedCategory==el ? "#7fad39":"black"}] cursor-pointer"`}>
-            {el}
+          {categories.map((el) => (
+            <li onClick={() => {
+              setSelectedCategory(el)
+              fetchProducts("", el)
+            }} key={el} className={`"hover:text-[#7fad39] text-[${selectedCategory == el ? "#7fad39" : "black"}] cursor-pointer"`}>
+              {el}
             </li>
-         ))}
+          ))}
         </ul>
       </div>
 
       {/* Search */}
       <div className="flex flex-1 border">
         <input
-        value= {searchInput}
-        onChange={(e)=>{
-          setSearchInput(e.target.value)
-          fetchProducts(e.target.value)
-        }}
+          value={searchInput}
+          onChange={(e) => {
+            setSearchInput(e.target.value)
+            fetchProducts(e.target.value)
+          }}
           placeholder="What do you need?"
           className="flex-1 px-4 sm:px-6 py-3 outline-none"
         />
-        <button onClick={()=>fetchProducts(searchInput.trim())}className="bg-[#7fad39] text-white px-4 sm:px-6">
+        <button onClick={() => fetchProducts(searchInput.trim())} className="bg-[#7fad39] text-white px-4 sm:px-6">
           SEARCH
         </button>
       </div>
@@ -133,24 +141,24 @@ function SearchSection({selectedCategory, setSelectedCategory, categories, fetch
 
 /* ================= MAIN ================= */
 
-function MainSection({products,selectedCategory, setSelectedCategory, categories, fetchProducts}) {
-  const[values, setValues] = useState([0, 100]);
-  const[priceRange, setPriceRange] = useState({min:0 , max:100});
-  useEffect(()=>{
-    const min = Math.min(...products.map(product=>product.price));
-    const max = Math.max(...products.map(product=>product.price));
-    const range = max-min;
+function MainSection({ loading, products, selectedCategory, setSelectedCategory, categories, fetchProducts }) {
+  const [values, setValues] = useState([0, 100]);
+  const [priceRange, setPriceRange] = useState({ min: 0, max: 100 });
+  useEffect(() => {
+    const min = Math.min(...products.map(product => product.price));
+    const max = Math.max(...products.map(product => product.price));
+    const range = max - min;
 
     setPriceRange({
-      min: range*values[0]/100+min,
-      max: range*values[1]/100+min
+      min: range * values[0] / 100 + min,
+      max: range * values[1] / 100 + min
     })
-  },[values,products])
+  }, [values, products])
 
- useEffect(()=>{
-  setValues([0,100]);
+  useEffect(() => {
+    setValues([0, 100]);
 
- },[products])
+  }, [products])
   return (
     <section className="max-w-[1296px] mx-auto px-4 sm:px-6 lg:px-12 xl:px-24 py-10 grid grid-cols-1 lg:grid-cols-[250px_1fr] gap-8">
 
@@ -159,15 +167,15 @@ function MainSection({products,selectedCategory, setSelectedCategory, categories
 
         <h2 className="text-xl sm:text-2xl font-bold">Department</h2>
 
-        <ul style={{userSelect:"none"}} className="flex flex-col gap-3 text-sm sm:text-base">
-         {categories.map((el)=>(
-          <li onClick={()=>{
-            setSelectedCategory(el)
-            fetchProducts("",el)
-          }}key={el} className={`"hover:text-[#7fad39] text-[${selectedCategory==el ? "#7fad39":"black"}] cursor-pointer"`}>
-            {el}
+        <ul style={{ userSelect: "none" }} className="flex flex-col gap-3 text-sm sm:text-base">
+          {categories.map((el) => (
+            <li onClick={() => {
+              setSelectedCategory(el)
+              fetchProducts("", el)
+            }} key={el} className={`"hover:text-[#7fad39] text-[${selectedCategory == el ? "#7fad39" : "black"}] cursor-pointer"`}>
+              {el}
             </li>
-         ))}
+          ))}
         </ul>
 
         <div>
@@ -197,11 +205,23 @@ function MainSection({products,selectedCategory, setSelectedCategory, categories
           Sale Off
         </h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
-          {products.filter(el=>el.price>=priceRange.min && el.price<=priceRange.max).map((el)=>(
-            <Link key={el._id} to={"/product/"+el._id}><Product item={el}/></Link>
-          ))}
-        </div>
+        {loading ? (
+          <div className="col-span-full flex justify-center items-center py-20">
+            <div className="w-10 h-10 border-4 border-gray-300 border-t-[#7fad39] rounded-full animate-spin"></div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
+            {products
+              .filter(
+                (el) => el.price >= priceRange.min && el.price <= priceRange.max
+              )
+              .map((el) => (
+                <Link key={el._id} to={"/product/" + el._id}>
+                  <Product item={el} />
+                </Link>
+              ))}
+          </div>
+        )}
       </div>
     </section>
   );
@@ -209,12 +229,12 @@ function MainSection({products,selectedCategory, setSelectedCategory, categories
 
 /* ================= PRODUCT ================= */
 
-function Product({item}) {
-  
+function Product({ item }) {
+
   return (
     <div className="text-center group">
 
-      <div className={`relative overflow-hidden h-[250px] sm:h-[300px]  bg-cover bg-center`} style={{backgroundImage: `url("${import.meta.env.VITE_BACKEND_HOST+"/image/images/"+item?.images?.[0]}")` }}>
+      <div className={`relative overflow-hidden h-[250px] sm:h-[300px]  bg-cover bg-center`} style={{ backgroundImage: `url("${import.meta.env.VITE_BACKEND_HOST + "/image/images/" + item?.images?.[0]}")` }}>
 
         <span className="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded">
           -20%
@@ -232,7 +252,7 @@ function Product({item}) {
       <p className="font-semibold">{item.title}</p>
       <p>
         <strong>INR {item.price}</strong>{" "}
-        <del className="text-gray-400">INR{Number(item.price/80*100).toFixed(2)}</del>
+        <del className="text-gray-400">INR{Number(item.price / 80 * 100).toFixed(2)}</del>
       </p>
     </div>
   );
@@ -240,47 +260,47 @@ function Product({item}) {
 
 /* ================= RANGE ================= */
 
-function PriceRangeSlider({values, setValues, priceRange}) {
- 
+function PriceRangeSlider({ values, setValues, priceRange }) {
+
 
   return (
-   <>
-   <Range
-      label="Select your value"
-      step={1}
-      min={0}
-      max={100}
-      values={values}
-      onChange={(values) => setValues(values)}
-      renderTrack={({ props, children }) => (
-        <div
-          {...props}
-          style={{
-            ...props.style,
-            height: "5px",
-            width: "100%",
-            backgroundImage:`linear-gradient(to right, #e3dede ${values[0]}%, red ${values[1]}%, red ${values[1]}%, #e3dede ${values[1]}%)`
-          }}
-        >
-          {children}
-        </div>
-      )}
-      renderThumb={({ props }) => (
-        <div
-          {...props}
-          key={props.key}
-          style={{
-            ...props.style,
-            height: "20px",
-            width: "20px",
-            borderRadius:"50%",
-            backgroundColor: "red",
-          }}
-        />
-      )}
-    />
+    <>
+      <Range
+        label="Select your value"
+        step={1}
+        min={0}
+        max={100}
+        values={values}
+        onChange={(values) => setValues(values)}
+        renderTrack={({ props, children }) => (
+          <div
+            {...props}
+            style={{
+              ...props.style,
+              height: "5px",
+              width: "100%",
+              backgroundImage: `linear-gradient(to right, #e3dede ${values[0]}%, red ${values[1]}%, red ${values[1]}%, #e3dede ${values[1]}%)`
+            }}
+          >
+            {children}
+          </div>
+        )}
+        renderThumb={({ props }) => (
+          <div
+            {...props}
+            key={props.key}
+            style={{
+              ...props.style,
+              height: "20px",
+              width: "20px",
+              borderRadius: "50%",
+              backgroundColor: "red",
+            }}
+          />
+        )}
+      />
       <p className="py-2"> Price: {priceRange.min} - {priceRange.max}
       </p>
-   </>
+    </>
   );
 }
