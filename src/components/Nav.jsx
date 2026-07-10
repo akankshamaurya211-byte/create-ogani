@@ -67,6 +67,7 @@ export default function Nav() {
                             <NavLink className={({isActive})=>`${isActive && "text-[#7fad39]"}`} to="/shop"><li className="hover:bg-gray-100 cursor-pointer">SHOP</li></NavLink>
                             <NavLink className={({isActive})=>`${isActive && "text-[#7fad39]"}`} to="/profile"><li className="hover:bg-gray-100 cursor-pointer">PROFILE</li></NavLink>
                             <NavLink className={({isActive})=>`${isActive && "text-[#7fad39]"}`}nk to="/contact"><li className="hover:bg-gray-100 cursor-pointer">CONTACT</li></NavLink>
+                            <NavLink className={({isActive})=>`${isActive && "text-[#7fad39]"}`}nk to="/contact"><li className="hover:bg-gray-100 cursor-pointer">LOGIN</li></NavLink>
                             
                         </ul>
                     </div>
@@ -80,6 +81,8 @@ export default function Nav() {
                     <NavLink className={({isActive})=>`${isActive && "text-[#7fad39]"}`} to="/shop"><button>SHOP</button></NavLink>
                     <NavLink className={({isActive})=>`${isActive && "text-[#7fad39]"}`} to="/profile"><button>PROFILE</button></NavLink>
                     <NavLink className={({isActive})=>`${isActive && "text-[#7fad39]"}`} to="/contact"><button>CONTACT</button></NavLink>
+                    <NavLink className={({isActive})=>`${isActive && "text-[#7fad39]"}`} to="/contact"><button>LOGIN</button></NavLink>
+
                 </div>
 
                 <div className="flex items-center gap-6">
