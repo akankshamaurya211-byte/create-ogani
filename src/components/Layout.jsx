@@ -2,10 +2,10 @@ import { Outlet } from "react-router-dom";
 import Nav from "./Nav";
 import Footer from "./Footer";
 
-export default function Layout(){
+export default function Layout({loggedInStatus}){
     return(
         <>
-            <Nav />
+            <Nav loggedInStatus={loggedInStatus}/>
             <Outlet />
             <Footer />
         </>
