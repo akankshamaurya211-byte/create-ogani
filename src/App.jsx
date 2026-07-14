@@ -31,6 +31,7 @@ export default function App() {
                     throw new Error("User not logged in!!!");
 
                   setLoggedIn(true);
+
             } catch (error) {
                 setLoggedIn(false);
 
@@ -50,7 +51,7 @@ export default function App() {
 
                 {
                     element: <Protect loading={loginStatusLoading} loggedIn={loggedIn} />, children: [
-                        { path: "/profile", element: <Profile setLoginStatusLoading={setLoggedIn} /> },
+                        { path: "/profile", element: <Profile setLoggedinStatus={setLoggedIn} /> },
                         { path: "/cart", element: <Cart /> },
                         { path: "/shop", element: <Shop /> },
                         { path: "/wishlist", element: <Wishlist /> }
@@ -60,7 +61,7 @@ export default function App() {
         },
         {
             element: <Redirect loading={loginStatusLoading} loggedIn={loggedIn} />, children: [
-                { path: "/login", element: <Login setloggedinStatus={setLoggedIn}/> },
+                { path: "/login", element: <Login setLoggedinStatus={setLoggedIn}/> },
                 { path: "/signup", element: <Signup /> },
             ]
         }

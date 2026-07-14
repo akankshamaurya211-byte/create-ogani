@@ -3,7 +3,7 @@ import { Mail, Lock, Eye } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-const Login = () => {
+const Login = ({setLoggedinStatus}) => {
 
     const navigator= useNavigate();
 
