@@ -35,7 +35,7 @@ export default function App() {
                 setLoggedIn(false);
 
             }finally{
-                setloginStatusLoading(false);
+                setLoginStatusLoading(false);
             }
         }
     )()
