@@ -19,7 +19,7 @@ import { useState, useEffect } from "react"
 export default function App() {
 
 
-    const [logginStatusLoading, setloginStatusLoading] = useState(true);
+    const [loginStatusLoading, setLoginStatusLoading] = useState(true);
     const [loggedIn, setLoggedIn] = useState(false);
 
     useEffect(()=>{
@@ -49,8 +49,8 @@ export default function App() {
                 { path: "/contact", element: <Contact /> },
 
                 {
-                    element: <Protect loading={logginStatusLoading} loggedIn={loggedIn} />, children: [
-                        { path: "/profile", element: <Profile setloginStatusLoading={setLoggedIn} /> },
+                    element: <Protect loading={loginStatusLoading} loggedIn={loggedIn} />, children: [
+                        { path: "/profile", element: <Profile setLoginStatusLoading={setLoggedIn} /> },
                         { path: "/cart", element: <Cart /> },
                         { path: "/shop", element: <Shop /> },
                         { path: "/wishlist", element: <Wishlist /> }
@@ -59,8 +59,8 @@ export default function App() {
             ]
         },
         {
-            element: <Redirect loading={logginStatusLoading} loggedIn={loggedIn} />, children: [
-                { path: "/login", element: <Login setlogginStatus={setLoggedIn}/> },
+            element: <Redirect loading={loginStatusLoading} loggedIn={loggedIn} />, children: [
+                { path: "/login", element: <Login setloggedinStatus={setLoggedIn}/> },
                 { path: "/signup", element: <Signup /> },
             ]
         }

@@ -13,7 +13,7 @@ import {
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
-const Profile = () => {
+const Profile = ({setLoggedinStatus}) => {
 
   const navigate = useNavigate();
   const [profileData, setProfileData] = useState({});
@@ -87,6 +87,7 @@ const Profile = () => {
       if (!response.ok) return toast.error("Could not logout. Please try again!", { position: "button-center" });
 
       toast.success("Logged out!", { position: "bottom-center" });
+      setLoggedinStatus(false);
       navigator("/login")
     } catch (error) {
       toast.error("Could not logout. Please try again!", { position: "button-center" });
