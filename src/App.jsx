@@ -43,7 +43,7 @@ export default function App() {
 
     const routes = createBrowserRouter([
         {
-            path: "/", element: <Layout logginStatusLoading={loggedIn} />, children: [
+            path: "/", element: <Layout loggedInStatus={loggedIn} />, children: [
                 { path: "/", element: <Home /> },
                 { path: "/product/:id", element: <ProductDetails /> },
                 { path: "/contact", element: <Contact /> },
@@ -60,7 +60,7 @@ export default function App() {
         },
         {
             element: <Redirect loading={logginStatusLoading} loggedIn={loggedIn} />, children: [
-                { path: "/login", element: <Login setloginStatus={setLoggedIn}/> },
+                { path: "/login", element: <Login setlogginStatus={setLoggedIn}/> },
                 { path: "/signup", element: <Signup /> },
             ]
         }
