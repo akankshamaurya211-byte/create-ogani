@@ -66,8 +66,8 @@ export default function Nav({loggedInStatus}) {
                             <NavLink className={({isActive})=>`${isActive && "text-[#7fad39]"}`} to="/"><li className="hover:bg-gray-100 cursor-pointer" >HOME</li></NavLink>
                             <NavLink className={({isActive})=>`${isActive && "text-[#7fad39]"}`} to="/shop"><li className="hover:bg-gray-100 cursor-pointer">SHOP</li></NavLink>
                             {loggedInStatus == true &&  <NavLink className={({isActive})=>`${isActive && "text-[#7fad39]"}`} to="/profile"><li className="hover:bg-gray-100 cursor-pointer">PROFILE</li></NavLink> }
-                            <NavLink className={({isActive})=>`${isActive && "text-[#7fad39]"}`}nk to="/contact"><li className="hover:bg-gray-100 cursor-pointer">CONTACT</li></NavLink>
-                            <NavLink className={({isActive})=>`${isActive && "text-[#7fad39]"}`}nk to="/contact"><li className="hover:bg-gray-100 cursor-pointer">LOGIN</li></NavLink>
+                            <NavLink className={({isActive})=>`${isActive && "text-[#7fad39]"}`} to="/contact"><li className="hover:bg-gray-100 cursor-pointer">CONTACT</li></NavLink>
+                            <NavLink className={({isActive})=>`${isActive && "text-[#7fad39]"}`} to="/login"><li className="hover:bg-gray-100 cursor-pointer">LOGIN</li></NavLink>
                             
                         </ul>
                     </div>
